@@ -26,7 +26,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['fakultetbistro.herokuapp.com', '*']
 
 
 # Application definition
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -51,6 +52,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'config.urls'
 
@@ -87,13 +90,17 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'NAME': os.getenv('DB_NAME', 'foodbot_db'),
+        'USER': os.getenv('DB_USER', 'foodbot_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),  # Default to empty to avoid localhost during build
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
+
+# Skip migrations during build if DB_HOST is not set
+if not os.getenv('DB_HOST'):
+    DATABASES['default']['HOST'] = None  # Prevent connection attempts during build
 
 AUTH_USER_MODEL = 'bot.CustomUser'
 
@@ -150,3 +157,5 @@ JAZZMIN_SETTINGS = {
     "show_ui_builder": True,
     "navigation_expanded": True,
 }
+
+STATIC_ROOT = BASE_DIR / 'static'

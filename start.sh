@@ -1,10 +1,9 @@
 #!/bin/bash
-
-# Run Django server in the background
-python manage.py runserver 0.0.0.0:${PORT} &
-
+if [ -n "$DB_HOST" ]; then
+    python manage.py migrate
+fi
+# Run Django server with Gunicorn on Heroku's dynamic port
+gunicorn --bind 0.0.0.0:${PORT} config.wsgi:application &
 # Run Telegram bot
 python manage.py runbot &
-
-# Keep container running
 wait
