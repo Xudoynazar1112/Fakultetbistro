@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sh -c "python manage.py migrate && ./start.sh"
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DEBUG=True  # Development mode; set to False in production
+      - DB_NAME=foodbot_db
+      - DB_USER=foodbot_user
+      - DB_PASSWORD=alloh1112
+      - DB_HOST=db
+      - DB_PORT=5432
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - ADMIN_GROUP_ID=${ADMIN_GROUP_ID}
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=foodbot_user
+      - POSTGRES_PASSWORD=alloh1112
+      - POSTGRES_DB=foodbot_db
+    restart: unless-stopped
+
+volumes:
+  static_volume:
+  media_volume:
+  postgres_data:
