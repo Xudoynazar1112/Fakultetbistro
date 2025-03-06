@@ -26,8 +26,8 @@ AT_KORZINKA = {1: "Savatchada", 2: "В корзине"}
 ALL = {1: "Jami", 2: "Все"}
 SUM = {1: "so'm", 2: "сум"}
 ABOUT_COMPANY = {
-    1: "Biz <b>F-18 backend dasturchilar guruhi</b>miz! \n\nBirgalikda biznesingizni rivojlantiramiz va uni zamonaviy uslubda ommaga taqdim qilamiz!\n\n<b>BIZ SIZ HAQINGIZDA QAYG'URAMIZ!!!</b>",
-    2: "Мы <b>F-18 backend dasturchilar guruhi</b>!\n\nМы будем развивать ваш бизнес вместе и представляем публике в современном стиле!\n\n<b>МЫ ЗАБОТИМСЯ О ВАС !!!</b>"
+    1: "Biz <b>Fakultet bistro guruhi</b>miz! \n\nJamoamiz orqali biz sizga mazali taomlarni tortiq qilamiz. O'zingizga kerakli bo'lgan taomlarni <code>🛒 Buyurtma qilish</code> bo'limidan buyurtma qilishingiz mumkin!\n\n<b>BIZ SIZ HAQINGIZDA QAYG'URAMIZ!!!</b>",
+    2: "Мы <b>Faculty Bistro!</b>!\n\nБлагодаря нашей команде мы доставим вам вкусную еду. Заказать нужную вам еду можно из раздела <code>🛒 Заказать</code> !\n\n<b>МЫ ЗАБОТИМСЯ О ВАС !!!</b>"
 }
 NO_ZAKAZ = {1: "Siz hali birorta buyurtma bermadingiz!", 2: "Вы еще не разместили ни одного заказа!"}
 SEND_LOCATION = {1: "📍 Lokatsiya jo'nating", 2: "📍 Отправить местоположение"}

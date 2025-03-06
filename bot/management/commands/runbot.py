@@ -4,8 +4,9 @@ import os
 from django.core.management.base import BaseCommand
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, CallbackQueryHandler
-from bot.handlers.main_handlers import start_handler
-from bot.handlers.chat_restriction_decorator import register_decorated_handlers  # Or your handler registration
+
+from bot.handlers import callback_handler
+from bot.handlers.main_handlers import start_handler, message_handler, contact_handler, location_handler
 from bot.config import TOKEN
 
 logging.basicConfig(
@@ -36,7 +37,18 @@ class Command(BaseCommand):
                 pass  # No process, proceed
 
         application = ApplicationBuilder().token(TOKEN).build()
-        register_decorated_handlers(application)  # Or your handler registration method
+        application.add_handler(CommandHandler('start', start_handler))
+        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
+        application.add_handler(MessageHandler(filters.CONTACT, contact_handler))
+        application.add_handler(MessageHandler(filters.LOCATION, location_handler))
+        application.add_handler(CallbackQueryHandler(callback_handler))
+
+        # Add error handler
+        async def error_handler(update, context):
+            """Handle errors in the bot and log them."""
+            logger.error("Exception while handling an update:", exc_info=context.error)
+
+        application.add_error_handler(error_handler)
 
         logger.info("Bot is starting...")
         with open(pid_file, "w") as f:

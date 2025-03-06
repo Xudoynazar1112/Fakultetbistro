@@ -26,7 +26,12 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG")
 
-ALLOWED_HOSTS = ['fakultetbistro.herokuapp.com', '*']
+ALLOWED_HOSTS = ['fakultetbistro-66a0cec5bbe0.herokuapp.com', 'localhost', '127.0.0.1']
+
+# foodbot/settings.py
+CSRF_TRUSTED_ORIGINS = [
+    'https://fakultetbistro-66a0cec5bbe0.herokuapp.com',
+]
 
 
 # Application definition
@@ -157,5 +162,3 @@ JAZZMIN_SETTINGS = {
     "show_ui_builder": True,
     "navigation_expanded": True,
 }
-
-STATIC_ROOT = BASE_DIR / 'static'
