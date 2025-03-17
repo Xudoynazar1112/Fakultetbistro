@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   app:
     build:
@@ -34,6 +36,33 @@ services:
       - POSTGRES_PASSWORD=alloh1112
       - POSTGRES_DB=foodbot_db
     restart: unless-stopped
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/sites-enabled/proskillsuz.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
+#    ports:
+#      - "443:443"
+#      - "80:80"
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/www/certbot:/var/www/certbot
+    entrypoint: >
+      sh -c "certbot certonly --webroot -w /var/www/certbot
+      --email mainsec01@gmail.com
+      --agree-tos
+      --no-eff-email
+      -d proskills.uz"
 
 volumes:
   static_volume:

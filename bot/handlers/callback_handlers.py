@@ -28,7 +28,10 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 await query.message.edit_text(new_text, reply_markup=new_markup)
         elif data[0] == "product":
             product = await get_product(int(data[1]))
-            caption = f"{TEXT_PRODUCT_PRICE[lang_id]} {product.price}\n{TEXT_PRODUCT_DESC[lang_id]}{getattr(product, f'description_{LANGUAGE_CODE[lang_id]}') or ''}"
+            if product.description_uz and product.description_ru:
+                caption = f"{TEXT_PRODUCT_PRICE[lang_id]} {product.price}\n{TEXT_PRODUCT_DESC[lang_id]}{getattr(product, f'description_{LANGUAGE_CODE[lang_id]}') or ''}"
+            else:
+                caption = f"{TEXT_PRODUCT_PRICE[lang_id]} {product.price}\n"
             await query.message.delete()
             image_url = f"{BASE_URL}{product.image.url}" if product.image else "https://via.placeholder.com/150"
             print("Image URL:", image_url)
@@ -159,16 +162,18 @@ async def callback_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
                 reply_markup=get_location_keyboard(lang_id)
             )
         elif data[0] == "orderstatus":
-            if data[1] == "pending":
-                orders = await get_my_order_pending(user.chat_id)
-                status_text = BTN_ORDER_PENDING[lang_id]
-            elif data[1] == "delivered":
-                orders = await get_my_order_delivered(user.chat_id)
-                status_text = BTN_ORDER_DELIVERED[lang_id]
-            elif data[1] == "canceled":
-                orders = await get_my_order_canceled(user.chat_id)
-                status_text = BTN_ORDER_CANCELED[lang_id]
+            # if data[1] == "pending":
+            #     orders = await get_my_order_pending(user.chat_id)
+            #     status_text = BTN_ORDER_PENDING[lang_id]
+            # elif data[1] == "delivered":
+            #     orders = await get_my_order_delivered(user.chat_id)
+            #     status_text = BTN_ORDER_DELIVERED[lang_id]
+            # elif data[1] == "canceled":
+            #     orders = await get_my_order_canceled(user.chat_id)
+            #     status_text = BTN_ORDER_CANCELED[lang_id]
 
+            orders = await get_my_orders() 
+    
             if orders:
                 response_text = f"<b>{ORDER_STATUS_HEADER[lang_id]}: {status_text}</b>\n\n"
                 response_text += f"👤 <b>Ism-familiya:</b> {user.first_name} {user.last_name}\n"

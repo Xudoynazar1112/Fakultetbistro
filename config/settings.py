@@ -26,11 +26,11 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG")
 
-ALLOWED_HOSTS = ['fakultetbistro-66a0cec5bbe0.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['ec2-13-60-157-193.eu-north-1.compute.amazonaws.com', 'localhost', '127.0.0.1', '13.60.157.193']
 
 # foodbot/settings.py
 CSRF_TRUSTED_ORIGINS = [
-    'https://fakultetbistro-66a0cec5bbe0.herokuapp.com',
+    'https://ec2-13-60-157-193.eu-north-1.compute.amazonaws.com',
 ]
 
 
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'bot.apps.BotConfig',  # Ensure this matches your AppConfig
 ]
 
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -147,7 +149,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -162,3 +164,8 @@ JAZZMIN_SETTINGS = {
     "show_ui_builder": True,
     "navigation_expanded": True,
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "https://ec2-13-60-157-193.eu-north-1.compute.amazonaws.com",
+    "http://127.0.0.1:8000",
+]

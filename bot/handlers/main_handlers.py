@@ -60,7 +60,7 @@ async def location_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             parse_mode='HTML'
         )
         await context.bot.send_location(ADMIN_GROUP_ID, latitude=location.latitude, longitude=location.longitude)
-        await update.message.reply_text("Your order has been placed successfully!")
+        await update.message.reply_text(SUCCESS_MESSAGE[user.lang_id])
         context.user_data['carts'] = {}  # Clear cart after order
         await send_main_menu(update, context, user)
     except Exception as e:
@@ -87,12 +87,13 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             elif not user.first_name:
                 user.first_name = text
                 await save_user(user)
-                await update.message.reply_text(TEXT_ENTER_LAST_NAME[user.lang_id])
-            elif not user.last_name:
-                user.last_name = text
-                await save_user(user)
-                await update.message.reply_text(TEXT_ENTER_CONTACT[user.lang_id],
-                                                reply_markup=get_contact_keyboard(user.lang_id))
+                # await update.message.reply_text(TEXT_ENTER_LAST_NAME[user.lang_id])
+                await update.message.reply_text(TEXT_ENTER_CONTACT[user.lang_id], reply_markup=get_contact_keyboard(user.lang_id))
+            # elif not user.last_name:
+            #     user.last_name = text
+            #     await save_user(user)
+            #     await update.message.reply_text(TEXT_ENTER_CONTACT[user.lang_id],
+            #                                     reply_markup=get_contact_keyboard(user.lang_id))
             elif not user.phone_number:
                 await update.message.reply_text("Please use the button to send your contact.",
                                                 reply_markup=get_contact_keyboard(user.lang_id))
@@ -106,14 +107,28 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                                                 reply_markup=get_category_keyboard(categories, user.lang_id))
                 context.user_data['state'] = 'ordering'
             elif text == BTN_MY_ORDERS[user.lang_id]:
-                await update.message.reply_text(
-                    ORDER_STATUS_TEXT[user.lang_id],
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton(BTN_ORDER_PENDING[user.lang_id], callback_data="orderstatus_pending")],
-                        [InlineKeyboardButton(BTN_ORDER_DELIVERED[user.lang_id], callback_data="orderstatus_delivered")],
-                        [InlineKeyboardButton(BTN_ORDER_CANCELED[user.lang_id], callback_data="orderstatus_canceled")]
-                    ])
-                )
+                orders = await get_my_orders(user.chat_id)
+                # response_text = f"<b>{ORDER_STATUS_HEADER[user.lang_id]}: {status_text}</b>\n\n"
+                response_text = f"👤 <b>{NAME[user.lang_id]}</b> {user.first_name} {user.last_name}\n"
+                response_text += f"📞 <b>{PHONE[user.lang_id]}</b> {user.phone_number}\n\n"
+                lang_code = LANGUAGE_CODE[user.lang_id]
+                buttons = []
+                for order in orders:
+                    order_products = await get_order_products(order)
+                    text = "\n"
+                    total_price = 0
+                    for order_product in order_products:
+                        product = await get_product(order_product.product_id)
+                        text += f"{order_product.amount} x {getattr(product, f'name_{lang_code}')}\n"
+                        total_price += product.price * order_product.amount
+                    # text += f"\n{ALL[user.lang_id]}: {total_price} {SUM[user.lang_id]}"
+                    response_text += f"📥 <b>Buyurtma #{order.id}:</b>\n{text}\n" if user.lang_id == 1 else f""
+                    if order.status == 1:  # Add Cancel button only for pending orders
+                        buttons.append([InlineKeyboardButton(
+                            f"Bekor qilish #{order.id}" if user.lang_id == 1 else "Отменить",
+                            callback_data=f"cancelorder_{order.id}"
+                        )])
+                await update.message.reply_text(response_text, parse_mode='HTML')
                 context.user_data['state'] = 'my_orders'
             elif text == BTN_ABOUT_US[user.lang_id]:
                 await update.message.reply_text(ABOUT_COMPANY[user.lang_id], parse_mode="HTML")
@@ -124,7 +139,7 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                 await update.message.reply_text(
                     text=COMMENTS[user.lang_id]
                 )
-                context.user_data['state'] = 'comments'
+                # context.user_data['state'] = 'comments'
 
         elif state == 'settings':
             if text == BTN_LANG_UZ:

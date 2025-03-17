@@ -3,9 +3,11 @@ from django.contrib.auth.models import AbstractUser
 
 
 class CustomUser(AbstractUser):
-    chat_id = models.BigIntegerField(unique=True, null=True, blank=True)
+    chat_id = models.BigIntegerField(unique=True, null=False, blank=False)
     lang_id = models.IntegerField(null=True, blank=True, choices=((1, 'Uzbek'), (2, 'Russian')))
-    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=False, blank=False)
+    first_name = models.CharField(max_length=150, blank=False)
+    last_name = models.CharField(max_length=150, blank=False)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name or ''} ({self.chat_id or self.username})"
@@ -19,7 +21,7 @@ class Category(models.Model):
         return self.name_uz
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     name_uz = models.CharField(max_length=255)
     name_ru = models.CharField(max_length=255)
     description_uz = models.TextField(null=True, blank=True)

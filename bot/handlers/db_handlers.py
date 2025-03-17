@@ -39,6 +39,9 @@ async def create_order(user, carts, status, payment_type, longitude, latitude):
         )
     return order
 
+async def get_my_orders(chat_id):
+    return await sync_to_async(list)(Order.objects.filter(user__chat_id=chat_id))
+
 async def get_my_order_pending(chat_id):
     return await sync_to_async(list)(Order.objects.filter(user__chat_id=chat_id, status=1))
 
