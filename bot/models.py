@@ -35,7 +35,7 @@ class Product(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     status = models.IntegerField(choices=[(1, "Pending"), (2, "Delivered"), (3, "Canceled")], default=1)  # 1: Pending
-    payment_type = models.IntegerField(null=True, blank=True, choices=[(1, "Cash"), (2, "Card")])  # 1: Cash, 2: Card
+    payment_type = models.IntegerField(null=True, blank=True, choices=[(1, "Cash"), (2, "Payme"), (3, "Click")])  # 1: Cash, 2: Payme, 3: Click
     longitude = models.FloatField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
