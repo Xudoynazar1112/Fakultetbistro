@@ -59,6 +59,8 @@ def get_product_keyboard(products, lang_id: int, category_id: int) -> InlineKeyb
 def get_quantity_keyboard(product_id: int, quantity: int, lang_id: int) -> InlineKeyboardMarkup:
     add_to_cart_text = "Savatchaga qo'shish" if lang_id == 1 else "Добавить в корзину"
     back_text = "Orqaga" if lang_id == 1 else "Назад"
+    if quantity < 1:
+        quantity = 1
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("−", callback_data=f"decrease_{product_id}"),
          InlineKeyboardButton(str(quantity), callback_data="noop"),

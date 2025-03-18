@@ -13,7 +13,7 @@ TEXT_ENTER_CONTACT = {
     2: "Укажите номер телефона"
 }
 TEXT_MAIN_MENU = {1: "🏠 Asosiy menyu", 2: "🏠 Главное меню"}
-BTN_ORDER = {1: "🛒 Buyurtma qilish", 2: "🛒 Заказать"}
+BTN_ORDER = {1: "🛒 Buyurtma berish", 2: "🛒 Заказать"}
 TEXT_ORDER = {1: "Kategoriylardan birini tanlang!", 2: "Выбери одну из категорий!"}
 BTN_MY_ORDERS = {1: "🛍 Buyurtmalarim", 2: "🛍 Мои заказы"}
 BTN_ABOUT_US = {1: "👨‍👩‍👦 Biz haqimizda", 2: "👨‍👩‍👦 O нас"}
@@ -77,4 +77,28 @@ NAME = {
 PHONE = {
     1: "Telefon raqam:",
     2: "Номер телефона:"
-        }
+}
+CASH = {
+    1: "Naqd pul",
+    2: "Наличные"
+}
+BACK = {
+    1: "Orqaga",
+    2: "Назад"
+}
+CLEAN = {
+    1: "Savatni bo'shatish",
+    2: "Опорожнение корзины"
+}
+CHOOSE_PAYMENT_TYPE = {
+    1: "To'lov turini tanlang:",
+    2: "Выберите тип оплаты:"
+}
+ORDER = {
+    1: "Buyurtma #",
+    2: "Заказ #"
+}
+PHONE_VALIDATION = {
+    1: "Iltimos telefon raqamingizni yuborish uchun quyidagi tugmadan foydalaning.",
+    2: "Пожалуйста, используйте кнопку ниже, чтобы отправить свой номер телефона."
+}

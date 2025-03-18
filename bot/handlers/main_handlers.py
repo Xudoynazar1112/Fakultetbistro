@@ -1,4 +1,5 @@
 import logging
+import re
 
 from .db_handlers import *
 from .keyboard_handlers import *
@@ -6,6 +7,8 @@ from ..config import ADMIN_GROUP_ID
 from ..globals import *
 
 logger = logging.getLogger(__name__)
+
+UZBEK_PHONE_PATTERN = re.compile(r"^\+?998\d{9}$")  # Valid Uzbek mobile numbers
 
 async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_user.id
@@ -25,7 +28,11 @@ async def start_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         user = await get_user(update.effective_user.id)
-        if update.message.contact:
+        if update.message.contact and update.message.contact.phone_number:
+            phone_number = update.message.contact.phone_number
+            if not UZBEK_PHONE_PATTERN.match(phone_number):
+                await update.message.reply_text("Invalid phone number. Please share a valid Uzbek number.")
+                return
             user.phone_number = update.message.contact.phone_number
             await save_user(user)
             await send_main_menu(update, context, user)
@@ -95,7 +102,7 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             #     await update.message.reply_text(TEXT_ENTER_CONTACT[user.lang_id],
             #                                     reply_markup=get_contact_keyboard(user.lang_id))
             elif not user.phone_number:
-                await update.message.reply_text("Please use the button to send your contact.",
+                await update.message.reply_text(PHONE_VALIDATION[user.lang_id],
                                                 reply_markup=get_contact_keyboard(user.lang_id))
             else:
                 await send_main_menu(update, context, user)
@@ -121,15 +128,15 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
                         product = await get_product(order_product.product_id)
                         text += f"{order_product.amount} x {getattr(product, f'name_{lang_code}')}\n"
                         total_price += product.price * order_product.amount
-                    # text += f"\n{ALL[user.lang_id]}: {total_price} {SUM[user.lang_id]}"
-                    response_text += f"📥 <b>Buyurtma #{order.id}:</b>\n{text}\n" if user.lang_id == 1 else f""
-                    if order.status == 1:  # Add Cancel button only for pending orders
-                        buttons.append([InlineKeyboardButton(
-                            f"Bekor qilish #{order.id}" if user.lang_id == 1 else "Отменить",
-                            callback_data=f"cancelorder_{order.id}"
-                        )])
+                    text += f"\n{ALL[user.lang_id]}: {total_price} {SUM[user.lang_id]}"
+                    response_text += f"📥 <b>{ORDER[user.lang_id]}{order.id}:</b>\n{text}\n"
+                    # if order.status == 1:  # Add Cancel button only for pending orders
+                    #     buttons.append([InlineKeyboardButton(
+                    #         f"Bekor qilish #{order.id}" if user.lang_id == 1 else "Отменить",
+                    #         callback_data=f"cancelorder_{order.id}"
+                    #     )])
                 await update.message.reply_text(response_text, parse_mode='HTML')
-                context.user_data['state'] = 'my_orders'
+                context.user_data['state'] = 'main_menu'
             elif text == BTN_ABOUT_US[user.lang_id]:
                 await update.message.reply_text(ABOUT_COMPANY[user.lang_id], parse_mode="HTML")
             elif text == BTN_SETTINGS[user.lang_id]:

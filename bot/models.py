@@ -21,7 +21,7 @@ class Category(models.Model):
         return self.name_uz
 
 class Product(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name_uz = models.CharField(max_length=255)
     name_ru = models.CharField(max_length=255)
     description_uz = models.TextField(null=True, blank=True)
